@@ -23,10 +23,6 @@ reddit = praw.Reddit(
     user_agent=os.getenv("REDDIT_USER_AGENT")
 )
 
-@app.get("/")
-def home():
-    return {"message": "Reddit Sentiment Analysis API"}
-
 @app.get("/analyze/")
 def analyze_reddit_sentiment(subreddit: str, limit: int = 50):
     subreddit_data = reddit.subreddit(subreddit)
@@ -40,11 +36,11 @@ def analyze_reddit_sentiment(subreddit: str, limit: int = 50):
             sentiment = "positive" if sentiment_score > 0 else "negative" if sentiment_score < 0 else "neutral"
             comments.append({"text": text, "sentiment": sentiment, "polarity": sentiment_score})
 
-    return {"subreddit": subreddit, "comments_analyzed": len(comments), "results": comments}
+    return comments  # Returns a list directly
 
 @app.get("/download/")
 def download_csv(subreddit: str, limit: int = 50):
-    data = analyze_reddit_sentiment(subreddit, limit)["results"]
+    data = analyze_reddit_sentiment(subreddit, limit)  # Fix here
     file_path = f"{subreddit}_sentiments.csv"
 
     with open(file_path, mode="w", newline="", encoding="utf-8") as file:
