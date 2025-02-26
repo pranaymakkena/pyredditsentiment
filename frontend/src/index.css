@@ -1,3 +1,45 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Global styles */
+body {
+  @apply bg-gradient-to-br from-blue-500 to-purple-600 text-white;
+}
+
+/* Centering container */
+.container {
+  @apply flex flex-col items-center p-6 min-h-screen w-full;
+}
+
+/* Input field */
+input {
+  @apply p-2 rounded-lg text-black w-full max-w-sm;
+}
+
+/* Buttons */
+button {
+  @apply mt-2 bg-yellow-400 px-4 py-2 rounded-lg w-full max-w-xs; /* Makes buttons full width on smaller screens */
+}
+
+/* Responsive button layout */
+@media (min-width: 640px) {  /* Tablet & larger */
+  .buttons-container {
+    @apply flex flex-row gap-4; /* Side-by-side buttons on larger screens */
+  }
+  button {
+    @apply w-auto px-6; /* Adjust button width */
+  }
+}
+
+/* Error messages */
+.error {
+  @apply text-red-400 mt-2 text-center;
+}
+
+/* Responsive spacing */
+@media (max-width: 768px) { 
+  .container {
+    @apply px-4;
+  }
+}
