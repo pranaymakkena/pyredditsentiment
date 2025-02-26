@@ -8,35 +8,39 @@ export default function App() {
   const [subreddit, setSubreddit] = useState("");
   const [comments, setComments] = useState([]);
   const [filteredSentiments, setFilteredSentiments] = useState("all");
-  const [error, setError] = useState(null); // Error handling
+  const [error, setError] = useState(null); // Error state
   const [loading, setLoading] = useState(false); // Loading state
 
   const handleFetch = async () => {
-    if (!subreddit) return;
-    
+    if (!subreddit.trim()) {
+      setError("Please enter a subreddit.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
+    setComments([]); // Reset comments before fetching
 
     try {
       const data = await fetchSentiments(subreddit);
       console.log("API Response:", data); // Debugging log
 
-      if (!Array.isArray(data)) {
+      if (!data || !Array.isArray(data)) {
         throw new Error("Invalid API response format");
       }
 
       setComments(data);
     } catch (err) {
       console.error("Error fetching sentiments:", err);
-      setError("Failed to fetch sentiments. Please try again.");
+      setError("Failed to fetch sentiments. Please check the subreddit name and try again.");
     }
 
     setLoading(false);
   };
 
-  const filteredComments = Array.isArray(comments) 
-    ? comments.filter(comment => filteredSentiments === "all" || comment.sentiment === filteredSentiments)
-    : [];
+  const filteredComments = comments.filter(
+    (comment) => filteredSentiments === "all" || comment.sentiment === filteredSentiments
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 text-white flex flex-col items-center p-6">
@@ -50,15 +54,23 @@ export default function App() {
         className="p-2 rounded-lg text-black"
       />
 
-      <button onClick={handleFetch} className="mt-2 bg-yellow-400 px-4 py-2 rounded-lg">
+      <button
+        onClick={handleFetch}
+        disabled={loading}
+        className={`mt-2 px-4 py-2 rounded-lg ${loading ? "bg-gray-400" : "bg-yellow-400"}`}
+      >
         {loading ? "Analyzing..." : "Analyze"}
       </button>
 
       {error && <p className="text-red-400 mt-2">{error}</p>}
 
-      <SentimentFilter setFilter={setFilteredSentiments} />
-      <SentimentChart comments={filteredComments} />
-      <CSVDownload data={filteredComments} />
+      {comments.length > 0 && (
+        <>
+          <SentimentFilter setFilter={setFilteredSentiments} />
+          <SentimentChart comments={filteredComments} />
+          <CSVDownload data={filteredComments} />
+        </>
+      )}
     </div>
   );
 }
