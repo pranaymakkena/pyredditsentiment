@@ -2,23 +2,32 @@ import React from "react";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 
 export default function SentimentChart({ comments }) {
-  const counts = { positive: 0, neutral: 0, negative: 0 };
-  comments.forEach(comment => counts[comment.sentiment]++);
+  const sentimentCounts = comments.reduce(
+    (acc, comment) => {
+      acc[comment.sentiment]++;
+      return acc;
+    },
+    { positive: 0, neutral: 0, negative: 0 }
+  );
 
   const data = [
-    { name: "Positive", value: counts.positive, color: "#22c55e" },
-    { name: "Neutral", value: counts.neutral, color: "#3b82f6" },
-    { name: "Negative", value: counts.negative, color: "#ef4444" },
+    { name: "Positive", value: sentimentCounts.positive, color: "#34D399" },
+    { name: "Neutral", value: sentimentCounts.neutral, color: "#FBBF24" },
+    { name: "Negative", value: sentimentCounts.negative, color: "#EF4444" },
   ];
 
   return (
-    <PieChart width={300} height={300}>
-      <Pie data={data} cx="50%" cy="50%" outerRadius={100} fill="#8884d8" dataKey="value">
-        {data.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={entry.color} />
-        ))}
-      </Pie>
-      <Tooltip />
-    </PieChart>
+    <div className="flex justify-center items-center w-full my-6">
+      <div className="w-full max-w-xs sm:max-w-md">
+        <PieChart width={300} height={300}>
+          <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8">
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip />
+        </PieChart>
+      </div>
+    </div>
   );
 }
