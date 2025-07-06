@@ -80,6 +80,10 @@ def download_csv(subreddit: str, limit: int = 50):
         logging.error(f"Error generating CSV for {subreddit}: {e}")
         raise HTTPException(status_code=500, detail="Error generating CSV")
 
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
+    
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
